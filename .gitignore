@@ -1,0 +1,17 @@
+# Never commit secrets
+.env
+*.env
+**/channels/telegram/.env
+access.json
+
+# Local reports produced by the scripts
+*-report.txt
+diagnostics.txt
+install-report.txt
+wsl-report.txt
+telegram-report.txt
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
