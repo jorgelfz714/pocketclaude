@@ -6,13 +6,19 @@ cd /d "%~dp0.."
 echo ==========================================================
 echo   PUBLISH TO GITHUB / PUBLICAR EN GITHUB
 echo.
-echo   Before running this, create an EMPTY repository on
-echo   github.com (no README, no .gitignore, no license) and
-echo   copy its URL.
+echo   STEP A. Create an EMPTY repository on github.com:
+echo     - go to https://github.com/new
+echo     - name it (for example: pocketclaude)
+echo     - Public
+echo     - do NOT tick README, .gitignore or license
+echo     - Create repository, then copy the URL
 echo.
-echo   Antes de ejecutar esto, crea un repositorio VACIO en
-echo   github.com (sin README, sin .gitignore, sin licencia) y
-echo   copia su URL.
+echo   PASO A. Crea un repositorio VACIO en github.com:
+echo     - entra a https://github.com/new
+echo     - ponle nombre (por ejemplo: pocketclaude)
+echo     - Publico
+echo     - NO marques README, .gitignore ni licencia
+echo     - Create repository, y copia la URL
 echo ==========================================================
 echo.
 
@@ -25,7 +31,7 @@ if errorlevel 1 (
 )
 
 set "REPOURL="
-set /p REPOURL=Repository URL (https://github.com/user/repo.git): 
+set /p REPOURL=STEP B. Paste the repository URL / Pega la URL del repositorio: 
 if "%REPOURL%"=="" (
   echo No URL entered. / No se ingreso URL.
   pause
@@ -33,47 +39,69 @@ if "%REPOURL%"=="" (
 )
 
 echo.
-echo Checking that no secrets are about to be committed...
+echo Checking that no secrets are about to be published...
 if exist ".env" ( echo REFUSING: a .env file exists here. Delete it first. & pause & exit /b )
-dir /s /b *.env >nul 2>&1 && ( echo REFUSING: .env files found. Delete them first. & pause & exit /b )
+
+if not exist ".git" (
+  echo Initializing the repository...
+  git init -q
+  git add -A
+  git commit -q -m "PocketClaude: Claude Code + Telegram on Windows via WSL 2"
+  git branch -M main
+) else (
+  echo Repository already prepared. Adding anything new...
+  git add -A
+  git diff --cached --quiet || git commit -q -m "Update"
+  git branch -M main >nul 2>&1
+)
 
 echo.
-git init
-git add -A
-git status --short
+echo Files that will be published:
+git ls-files
 echo.
-echo Review the list above. Nothing with a token should be there.
-echo Revisa la lista de arriba. No debe aparecer nada con un token.
-echo.
-pause
 
-git commit -m "PocketClaude: Claude Code + Telegram on Windows via WSL 2"
-git branch -M main
 git remote remove origin >nul 2>&1
 git remote add origin %REPOURL%
 
+echo ==========================================================
+echo   STEP C. Sign in.
+echo   Git will open a browser window to sign in to GitHub.
+echo   If instead it asks in this window for a username and
+echo   password, the "password" is a Personal Access Token:
+echo     https://github.com/settings/tokens
+echo     Generate new token (classic) ^> tick "repo" ^> copy it.
 echo.
-echo Pushing. Git will ask for your GitHub username and a Personal Access
-echo Token (not your password). Create one at:
-echo   https://github.com/settings/tokens  ^> Generate new token (classic)
-echo   ^> tick "repo" ^> copy the token and paste it as the password.
+echo   PASO C. Inicia sesion.
+echo   Git abrira una ventana del navegador para entrar a GitHub.
+echo   Si en cambio te pide usuario y contrasena aqui, la
+echo   "contrasena" es un Token de Acceso Personal, que creas en
+echo   la direccion de arriba marcando "repo".
+echo ==========================================================
 echo.
-echo Subiendo. Git pedira tu usuario de GitHub y un Token de Acceso Personal
-echo (no tu contrasena). Crealo en la misma direccion, marca "repo", copia el
-echo token y pegalo donde pida la contrasena.
-echo.
+pause
 git push -u origin main
 
 echo.
 if errorlevel 1 (
-  echo Push failed. Check the URL and your token, then run this again.
-  echo Fallo la subida. Revisa la URL y tu token, y vuelve a ejecutarlo.
+  echo ----------------------------------------------------------
+  echo  PUSH FAILED / FALLO LA SUBIDA
+  echo  Most common causes / causas mas comunes:
+  echo   - the repository on github.com is not empty
+  echo   - the URL is wrong (it must end in .git or be the repo URL)
+  echo   - the sign-in was cancelled
+  echo  Fix it and run this file again. Nothing was lost.
+  echo ----------------------------------------------------------
 ) else (
-  echo Done. Your repository is live at %REPOURL%
-  echo Listo. Tu repositorio esta publicado en %REPOURL%
+  echo ----------------------------------------------------------
+  echo  DONE / LISTO
+  echo  Your repository is live at:
+  echo  %REPOURL%
   echo.
-  echo Now open it on github.com and add a short description and topics:
-  echo   claude-code, telegram-bot, wsl2, windows, mcp, notion, automation
+  echo  Now open it on github.com and add:
+  echo   - a short description
+  echo   - topics: claude-code, telegram-bot, wsl2, windows, mcp,
+  echo     notion, automation, personal-assistant
+  echo ----------------------------------------------------------
 )
 pause
 endlocal
