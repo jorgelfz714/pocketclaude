@@ -197,6 +197,26 @@ El bot es Claude con tus herramientas, así que los mensajes útiles se ven así
 
 ---
 
+## Usarlo desde otra computadora
+
+Puedes instalar PocketClaude en una segunda PC con Windows (o mudarlo a una
+nueva) siguiendo los mismos pasos 1 a 5. Tres cosas cambian:
+
+- **Reutiliza el mismo bot.** En el paso 4 pega el token del bot que ya tienes;
+  no hace falta crear otro con @BotFather. Si no lo tienes a mano, en @BotFather
+  envía `/mybots`, elige tu bot y pulsa **API Token**.
+- **Enciende el bot en una sola computadora a la vez.** Telegram entrega los
+  mensajes a un solo programa por token. Si `5-start-bot.cmd` corre en dos PCs al
+  mismo tiempo, se pelean por los mensajes (`409 Conflict`) y el bot responde a
+  medias. Escribe `/exit` en la otra PC antes de encender esta. Si quieres las dos
+  encendidas a la vez, crea un segundo bot.
+- **Empareja de nuevo.** La lista de quién puede hablar con el bot vive en cada
+  computadora. La primera vez que le escribas desde esta PC te dará un código:
+  repite `/telegram:access pair <código>` y `/telegram:access policy allowlist`.
+  Si conectaste Notion u otras herramientas, autorízalas otra vez con `/mcp`.
+
+---
+
 ## Cuando algo falla
 
 Ejecuta **`6-diagnose.cmd`** en una segunda ventana, con la ventana del bot
