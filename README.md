@@ -187,8 +187,8 @@ If you connected Notion, type `/mcp` once and authorize it in the browser.
 Run `5-start-bot.cmd`, accept the trust prompt if asked, leave the window open,
 and talk to your bot from anywhere. `/exit` stops it.
 
-Want it running 24/7 without your PC turned on? Install it on a cloud server:
-[docs/always-on.md](docs/always-on.md).
+Want it running 24/7 without your PC turned on? Install it, at no cost, on a
+machine that never turns off: [docs/always-on.md](docs/always-on.md).
 
 The bot is Claude with your tools, so useful messages look like:
 
@@ -260,7 +260,7 @@ scripts/
   6-diagnose.cmd              Diagnostics when the bot goes quiet
   publish-to-github.cmd       Publish your own copy (optional)
 server/
-  install.sh                  24/7 bot on a cloud Linux server
+  install.sh                  24/7 bot on an always-on Linux machine
 docs/
   troubleshooting.md          Every error, its cause, and its fix
   notion-assistant.md         The Notion assistant layer

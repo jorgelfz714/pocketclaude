@@ -1,35 +1,57 @@
 # Bot siempre encendido, sin tu computadora
 
 En Windows el bot vive en una ventana de tu PC: si la apagas, el bot se calla.
-Para tenerlo activo 24/7, instálalo en un **servidor Linux en la nube**, una
-computadora pequeña que nunca se apaga. Claude Code y el plugin de Telegram
-funcionan ahí sin WSL ni parches de Windows.
+Para tenerlo activo 24/7 hace falta **otro equipo que nunca se apague** y que
+corra Linux. Claude Code y el plugin de Telegram funcionan ahí sin WSL ni parches
+de Windows.
 
-## 1. Consigue un servidor
+Este proyecto tiene una regla: **costo cero**. Nada de pruebas gratuitas que se
+convierten en cobros ni cuentas de pago "por si acaso". Por eso esta guía **no**
+recomienda servidores de pago, ni Google Cloud (para seguir usando su nivel
+gratuito después de la prueba hay que pasar a una cuenta de pago, y hay reportes
+de cobros pequeños inesperados).
 
-Cualquier servidor con **Ubuntu 22.04 o 24.04** sirve. Dos opciones:
+## 1. Elige dónde va a vivir el bot
 
-| Opción | Costo | Notas |
-|---|---|---|
-| **Google Cloud, e2-micro** | Gratis (nivel "Always Free") | 1 GB de RAM; el script agrega memoria swap. Solo en las regiones `us-west1`, `us-central1` o `us-east1`. Pide tarjeta para verificar identidad. |
-| Hetzner, DigitalOcean, Vultr, etc. | Unos USD 4–6 al mes | Más RAM, menos pasos. |
+| Opción | Costo | Lo bueno | Lo malo |
+|---|---|---|---|
+| **A. Un equipo viejo en casa** (laptop, mini PC, Raspberry Pi 4/5) | 0 si ya lo tienes (solo la luz) | Sin tarjeta, sin cuentas, sin límites | Tiene que quedarse encendido y con internet |
+| **B. Oracle Cloud "Always Free"** | 0 mientras **no** actualices la cuenta | Encendido en un centro de datos | Pide tarjeta solo para verificar identidad. Oracle puede **detener** máquinas gratuitas que pasan 7 días casi sin uso, y un bot de chat usa muy poco; si pasa, hay que volver a encenderla desde la consola. |
 
-Con Google Cloud:
+Si no quieres depender de ningún equipo, mira también la
+[alternativa sin servidor](#alternativa-sin-servidor) al final.
 
-1. Entra a <https://console.cloud.google.com> → **Compute Engine** → **VM
-   instances** → **Create instance**.
-2. Región `us-central1` (o `us-west1` / `us-east1`), tipo de máquina **e2-micro**.
-3. En **Boot disk** elige **Ubuntu 24.04 LTS**, disco *Standard persistent* de
-   30 GB.
-4. **Create**. Cuando aparezca, pulsa el botón **SSH**: se abre una terminal en tu
-   navegador. No necesitas instalar nada en tu PC.
+### Opción A — Equipo en casa
 
-Revisa las condiciones actuales del nivel gratuito en
-<https://cloud.google.com/free> antes de crear la máquina.
+1. Instala **Ubuntu 24.04** (laptop o mini PC) o **Raspberry Pi OS de 64 bits**
+   (Raspberry Pi). Ambos son gratuitos.
+2. Configúralo para que no se suspenda: en Ubuntu, *Configuración → Energía →
+   Suspensión automática: desactivada*. En una laptop, déjala conectada a la
+   corriente.
+3. Abre una terminal en ese equipo y sigue el paso 2.
 
-## 2. Instala PocketClaude en el servidor
+### Opción B — Oracle Cloud Always Free
 
-En la terminal SSH pega:
+1. Crea una cuenta en <https://www.oracle.com/cloud/free/>. Pide una tarjeta para
+   verificar tu identidad. **Nunca pulses "Upgrade" ni "Pay As You Go"**: mientras
+   la cuenta siga siendo gratuita, Oracle no puede cobrarte.
+2. En la consola: **Compute → Instances → Create instance**. Imagen **Ubuntu
+   24.04**. En *Shape* elige una marcada **Always Free-eligible**
+   (`VM.Standard.E2.1.Micro` o `VM.Standard.A1.Flex`).
+3. En *Add SSH keys* pulsa **Save private key** y guarda el archivo.
+4. **Create**. Copia la *Public IP address* y conéctate desde PowerShell en tu PC:
+   ```
+   ssh -i RUTA\DEL\ARCHIVO.key ubuntu@IP-PUBLICA
+   ```
+5. Revisa en <https://www.oracle.com/cloud/free/> qué incluye hoy el nivel
+   gratuito; las condiciones pueden cambiar.
+
+Si un día el bot deja de responder, entra a la consola de Oracle y mira si la
+instancia aparece **Stopped**: pulsa **Start** y el servicio arranca solo.
+
+## 2. Instala PocketClaude en el equipo
+
+En la terminal del equipo (o en la sesión SSH, si es Oracle) pega:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jorgelfz714/pocketclaude/main/server/install.sh -o install.sh
@@ -41,7 +63,7 @@ El script hace en siete pasos lo mismo que los scripts de Windows:
 1. Instala `curl`, `unzip` y `tmux`, y agrega swap si la máquina tiene poca RAM.
 2. Instala Claude Code.
 3. Instala Bun y lo enlaza en `/usr/local/bin` (el mismo arreglo que en Windows).
-4. Abre Claude para que inicies sesión. Como el servidor no tiene navegador, te
+4. Abre Claude para que inicies sesión. Si el equipo no tiene navegador, te
    muestra un **enlace**: ábrelo en tu celular o PC, inicia sesión, copia el código
    y pégalo en la terminal. Si pregunta si confías en la carpeta, elige **sí**.
    Luego escribe `/exit`.
@@ -103,3 +125,12 @@ El servidor guarda tu sesión de Claude y el token del bot, y el bot puede usar 
 cuentas conectadas. Trátalo como tu PC: no compartas el acceso SSH, deja la
 política en `allowlist` y, si el token se filtra, revócalo en @BotFather con
 `/revoke` y vuelve a ejecutar `bash install.sh`.
+
+## Alternativa sin servidor
+
+Si lo que necesitas es hablar con tu asistente desde el celular a cualquier hora,
+la **app de Claude** (iOS/Android) ya lo hace sin ningún equipo encendido y sin
+costo extra: viene con el plan de Claude que ya pagas. Conecta ahí Gmail, Google
+Calendar, Google Drive y Notion en *Configuración → Conectores* y pregúntale lo
+mismo que al bot. Lo que pierdes frente al bot es Telegram y el acceso a los
+archivos de tu computadora.
