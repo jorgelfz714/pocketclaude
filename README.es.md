@@ -185,6 +185,9 @@ Si conectaste Notion, escribe `/mcp` una vez y autorízalo en el navegador.
 
 ## Uso diario
 
+¿Lo quieres activo 24/7 sin tener tu PC encendida? Instálalo en un servidor en
+la nube: [docs/always-on.es.md](docs/always-on.es.md).
+
 Ejecuta `5-start-bot.cmd`, acepta la confianza de la carpeta si te lo pregunta,
 deja la ventana abierta y habla con tu bot desde donde estés. `/exit` lo apaga.
 
@@ -257,9 +260,12 @@ scripts/
   5-start-bot.cmd             Encender el bot (este es el de todos los días)
   6-diagnose.cmd              Diagnóstico cuando el bot se queda callado
   publish-to-github.cmd       Publicar tu propia copia (opcional)
+server/
+  install.sh                  Bot 24/7 en un servidor Linux en la nube
 docs/
   troubleshooting.es.md       Cada error, su causa y su solución
   notion-assistant.es.md      La capa de asistente en Notion
+  always-on.es.md             Bot siempre encendido, sin tu computadora
   img/                        Diagramas usados en este README
 ```
 
